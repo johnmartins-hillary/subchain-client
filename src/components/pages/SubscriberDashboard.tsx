@@ -195,31 +195,51 @@ export default function SubscriberDashboard() {
       </div>
 
       <Tabs defaultValue="subscriptions" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="subscriptions">Active Subscriptions</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming Payments</TabsTrigger>
-          <TabsTrigger value="history">Payment History</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-0 sm:gap-0 h-auto sm:h-10">
+          <TabsTrigger
+            value="subscriptions"
+            className="text-xs sm:text-sm py-2 sm:py-0 px-2 sm:px-3 whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            <span className="block sm:hidden">Active</span>
+            <span className="hidden sm:block">Active Subscriptions</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="upcoming"
+            className="text-xs sm:text-sm py-2 sm:py-0 px-2 sm:px-3 whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            <span className="block sm:hidden">Upcoming</span>
+            <span className="hidden sm:block">Upcoming Payments</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="history"
+            className="text-xs sm:text-sm py-2 sm:py-0 px-2 sm:px-3 whitespace-nowrap overflow-hidden text-ellipsis"
+          >
+            <span className="block sm:hidden">History</span>
+            <span className="hidden sm:block">Payment History</span>
+          </TabsTrigger>
         </TabsList>
-
         <TabsContent value="subscriptions">
           <div className="space-y-4">
             {activeSubscriptions.map((subscription) => (
               <Card key={subscription.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                    {/* Creator Info Section */}
                     <div className="flex items-center space-x-4">
-                      <Avatar>
+                      <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
                         <AvatarImage src={subscription.avatar} />
                         <AvatarFallback>
                           {subscription.creator.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <h3 className="font-medium">{subscription.name}</h3>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-sm sm:text-base truncate">
+                          {subscription.name}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">
                           by {subscription.creator}
                         </p>
-                        <div className="flex items-center space-x-2 mt-1">
+                        <div className="flex flex-wrap items-center gap-2 mt-2">
                           <Badge variant="outline" className="text-xs">
                             {subscription.category}
                           </Badge>
@@ -234,48 +254,59 @@ export default function SubscriberDashboard() {
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <div className="font-semibold">
-                        {subscription.price}/{subscription.period}
+                    {/* Billing Info and Actions Section */}
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
+                      {/* Billing Info */}
+                      <div className="text-left sm:text-right">
+                        <div className="font-semibold text-sm sm:text-base">
+                          {subscription.price}/{subscription.period}
+                        </div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
+                          Next:{" "}
+                          {new Date(
+                            subscription.nextBilling
+                          ).toLocaleDateString()}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {subscription.renewalCount} renewals
+                        </div>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Next:{" "}
-                        {new Date(
-                          subscription.nextBilling
-                        ).toLocaleDateString()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {subscription.renewalCount} renewals
-                      </div>
-                    </div>
 
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Settings className="w-3 h-3 mr-1" />
-                        Manage
-                      </Button>
-                      {subscription.status === "expiring" ? (
+                      {/* Action Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
                         <Button
+                          variant="outline"
                           size="sm"
-                          onClick={() =>
-                            handleRenewSubscription(subscription.id)
-                          }
+                          className="w-full sm:w-auto"
                         >
-                          <CheckCircle className="w-3 h-3 mr-1" />
-                          Renew
+                          <Settings className="w-3 h-3 mr-1" />
+                          Manage
                         </Button>
-                      ) : (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() =>
-                            handleCancelSubscription(subscription.id)
-                          }
-                        >
-                          <X className="w-3 h-3 mr-1" />
-                          Cancel
-                        </Button>
-                      )}
+                        {subscription.status === "expiring" ? (
+                          <Button
+                            size="sm"
+                            className="w-full sm:w-auto"
+                            onClick={() =>
+                              handleRenewSubscription(subscription.id)
+                            }
+                          >
+                            <CheckCircle className="w-3 h-3 mr-1" />
+                            Renew
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="w-full sm:w-auto"
+                            onClick={() =>
+                              handleCancelSubscription(subscription.id)
+                            }
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardContent>

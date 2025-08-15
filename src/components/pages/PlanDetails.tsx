@@ -19,6 +19,7 @@ import {
   Globe,
 } from "lucide-react";
 
+
 export default function PlanDetails() {
   const [isSubscribing, setIsSubscribing] = useState(false);
 
